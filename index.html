@@ -1,0 +1,2449 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mainzahn – Azubi Vokabeltrainer</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#64748b;--brand:#126e82;--brand2:#0e5362;--ok:#18794e;--danger:#b42318;--line:#dbe3ec}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text)}
+header{background:linear-gradient(135deg,#0e5362,#126e82);color:#fff;padding:18px 24px;position:sticky;top:0;z-index:3}
+.top{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font-size:24px;font-weight:800} .sub{opacity:.85;font-size:13px}
+main{max-width:1100px;margin:24px auto;padding:0 18px} .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 4px 18px rgba(15,23,42,.05)}
+h1,h2,h3{margin-top:0} button,input,select{font:inherit} button{border:0;border-radius:10px;padding:11px 15px;cursor:pointer;background:var(--brand);color:#fff;font-weight:700} button.secondary{background:#e8eef4;color:var(--text)} button.danger{background:#b42318}
+input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;margin:6px 0 12px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px} .tabs button.active{background:#0e5362}
+.badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#e7f6ef;color:var(--ok);font-weight:700;font-size:12px}
+.exam{background:#fff5f3;border-color:#f4c7c1} .learn{background:#f3fbfd}
+.stat{font-size:30px;font-weight:800} .muted{color:var(--muted)} .row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.progress{height:9px;background:#e6ebf0;border-radius:99px;overflow:hidden} .bar{height:100%;background:var(--brand);width:0}
+.choice{display:block;width:100%;margin:8px 0;text-align:left;background:#f0f4f7;color:var(--text);border:1px solid var(--line)}
+.choice.correct{background:#e8f7ef;border-color:#7ac79f} .choice.wrong{background:#fff0ee;border-color:#e49b91}
+.small{font-size:12px} .hidden{display:none!important} table{width:100%;border-collapse:collapse} th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}
+.login{max-width:430px;margin:70px auto} .logo{font-size:42px;font-weight:900;color:var(--brand);margin-bottom:5px}
+.notice{padding:13px;border-radius:12px;background:#eef7fa;margin:12px 0} .locked{opacity:.55}
+@media(max-width:600px){header{padding:14px} main{margin:16px auto} .brand{font-size:20px}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const MONTHS = [
+  [
+    {
+      "term": "Abrasion",
+      "meaning": "Abnutzung\nder Zähne\ndurch\nKnirschen\nam\nGegenzah\nn oder\ndurch\nAbnutzung\nder\nKaufläche\nn durch\nAbkauen",
+      "practice": "",
+      "prep": "",
+      "page": 1,
+      "month": 1
+    },
+    {
+      "term": "Abdruckpfosten",
+      "meaning": "Teil eines\nImplantats\nystems,\ndas mit\ndem\nImplantatk\nörper oder\ndem\nImplantata\nufbau zur\nAbformung\nverbunden\nwird und\nzur\nAbformung\ndient",
+      "practice": "Steri -\nSchrank\nNR 5 in\nentsprec\nhenden\nBoxen",
+      "prep": "Ultraschallbad - Bürsten - Einschweißen - Steri - in\ndie entsprechenden Boxen sortieren",
+      "page": 1,
+      "month": 1
+    },
+    {
+      "term": "absorbieren",
+      "meaning": "aufsaugen,\n\"verschluc\nken\"",
+      "practice": "",
+      "prep": "",
+      "page": 2,
+      "month": 1
+    },
+    {
+      "term": "Abszess",
+      "meaning": "Ansammlu\nng von\nEiter (Pus)\nim\nGewebe\n(aufgrund\nfehlender\nAbflußmög\nlichkeit wie\nz.B. einer\nFistel)",
+      "practice": "",
+      "prep": "",
+      "page": 2,
+      "month": 1
+    },
+    {
+      "term": "Abutment\n(sprich:\nAbattment)",
+      "meaning": "Implantata\nufbauteil\naus Titan\noder\nZirkonoxid",
+      "practice": "",
+      "prep": "",
+      "page": 2,
+      "month": 1
+    },
+    {
+      "term": "Acetylsalicysäur\ne (ASS)",
+      "meaning": "Wirkstoff\nvon\nSchmerzm\nitteln mit\nblutverdün\nnender\nWirkung\n(z.B.\nAspirin,\nHerz-Ass)",
+      "practice": "",
+      "prep": "",
+      "page": 2,
+      "month": 1
+    },
+    {
+      "term": "Ad-Hoc",
+      "meaning": "sofort,\nspontan",
+      "practice": "",
+      "prep": "",
+      "page": 2,
+      "month": 1
+    },
+    {
+      "term": "adhäsiv",
+      "meaning": "haftend,\nanklebend",
+      "practice": "",
+      "prep": "",
+      "page": 2,
+      "month": 1
+    },
+    {
+      "term": "Adhäsiv-Technik",
+      "meaning": "klebende\nBefestigun\ng von\nFüllungen\nam\nZahnschm\nelz\n(unter\nAnwendun\ng der\nSäure-\nÄtztechnik)",
+      "practice": "",
+      "prep": "",
+      "page": 3,
+      "month": 1
+    },
+    {
+      "term": "Adstringens",
+      "meaning": "auf\nSchleimhä\nute und\nWunden\nzusammen\nziehend\nwirkendes\nMittel\n(leicht\nblutstillend\n) zB H2O2",
+      "practice": "",
+      "prep": "",
+      "page": 3,
+      "month": 1
+    },
+    {
+      "term": "adjustieren",
+      "meaning": "einrichten,\neinstellen\n(Einschleif\nen von\nSchienen)",
+      "practice": "",
+      "prep": "",
+      "page": 3,
+      "month": 1
+    },
+    {
+      "term": "adjustierte\ngefräste Schiene",
+      "meaning": "Kunststoffs\nchiene für\nverschiede\nne\ntherapeutis\nche\nZwecke\n(insbesond\nere bei\nKiefergele\nnksbeschw\nerden),\nmeist mit\nFront-\nEckzahnfü\nhrung",
+      "practice": "",
+      "prep": "",
+      "page": 4,
+      "month": 1
+    },
+    {
+      "term": "akut",
+      "meaning": "dringend,\nplötzlich,\nheftig",
+      "practice": "",
+      "prep": "",
+      "page": 4,
+      "month": 1
+    },
+    {
+      "term": "Alginat",
+      "meaning": "Abdruckm\naterial,\nwelches\naus\nMeeresalg\nen und\nTang\ngewonnen\nwird",
+      "practice": "",
+      "prep": "",
+      "page": 4,
+      "month": 1
+    },
+    {
+      "term": "A-Linie",
+      "meaning": "Grenzlinie\nzwischen\nhartem\nund\nweichem\nGaumen",
+      "practice": "",
+      "prep": "",
+      "page": 4,
+      "month": 1
+    },
+    {
+      "term": "Alveole (sprich:\nAlweole)",
+      "meaning": "Zahnfach\nim\nKnochen",
+      "practice": "",
+      "prep": "",
+      "page": 4,
+      "month": 1
+    },
+    {
+      "term": "Alveolarfortsatz",
+      "meaning": "der Teil\ndes\nKiefers, in\ndem sich\ndie\nAlveolen\nbefinden",
+      "practice": "",
+      "prep": "",
+      "page": 4,
+      "month": 1
+    },
+    {
+      "term": "Alveolotomie",
+      "meaning": "teilweise\nAbtragung\ndes\nAlveolarfor\ntsatzes",
+      "practice": "",
+      "prep": "",
+      "page": 5,
+      "month": 1
+    },
+    {
+      "term": "Amalgam",
+      "meaning": "Stabiles\naber\numstrittene\ns\nZahnfüllun\ngsmaterial\n(Gemisch\naus\nQuecksilbe\nr, Silber,\nZinn und\nKupfer)",
+      "practice": "",
+      "prep": "",
+      "page": 5,
+      "month": 1
+    },
+    {
+      "term": "Amoxicillin",
+      "meaning": "Antibiotiku\nm aus der\nGruppe\nder\nPenicilline",
+      "practice": "",
+      "prep": "",
+      "page": 5,
+      "month": 1
+    },
+    {
+      "term": "Anästhesie",
+      "meaning": "Unempfind\nlichkeit\nz.B. durch\nBetäubung\nsspritze",
+      "practice": "",
+      "prep": "",
+      "page": 5,
+      "month": 1
+    },
+    {
+      "term": "Analgetika",
+      "meaning": "Medikame\nnte zur\nSchmerzsti\nllung",
+      "practice": "",
+      "prep": "",
+      "page": 5,
+      "month": 1
+    },
+    {
+      "term": "Anamnese",
+      "meaning": "Krankheits\nvorgeschic\nhte des\nPatienten",
+      "practice": "",
+      "prep": "",
+      "page": 5,
+      "month": 1
+    },
+    {
+      "term": "Anastomose",
+      "meaning": "netzartige\nnatürliche\nVerbindun\ng zwischen\nBlut,-\nLymphgefä\nßen und\nNerven",
+      "practice": "",
+      "prep": "",
+      "page": 5,
+      "month": 1
+    }
+  ],
+  [
+    {
+      "term": "Anker",
+      "meaning": "1.\nBefestigun\ngselement,\ndas nach\nArt des\nDruckknop\nfs\nfunktioniert\n2.\nBrückenan\nker, Krone\nauf dem\nAnkerzahn",
+      "practice": "",
+      "prep": "",
+      "page": 6,
+      "month": 2
+    },
+    {
+      "term": "anfinieren",
+      "meaning": "Goldinlay\nrandständi\ng\nabdichten",
+      "practice": "",
+      "prep": "",
+      "page": 6,
+      "month": 2
+    },
+    {
+      "term": "Antrum",
+      "meaning": "Kieferhöhl\ne",
+      "practice": "",
+      "prep": "",
+      "page": 6,
+      "month": 2
+    },
+    {
+      "term": "antibakteriell",
+      "meaning": "gegen\nBakterien,\nmit\nabtötender\nWirkung\nauf\nBakterien",
+      "practice": "",
+      "prep": "",
+      "page": 6,
+      "month": 2
+    },
+    {
+      "term": "Aphthe (sprich:\nAfte)",
+      "meaning": "schmerzha\nftes\nGeschwür\nder\nMundschle\nimhaut",
+      "practice": "",
+      "prep": "",
+      "page": 6,
+      "month": 2
+    },
+    {
+      "term": "apical, (Apex)",
+      "meaning": "an der\nWurzelspit\nze",
+      "practice": "",
+      "prep": "",
+      "page": 6,
+      "month": 2
+    },
+    {
+      "term": "Aerosol",
+      "meaning": "Sprühnebe\nl",
+      "practice": "",
+      "prep": "",
+      "page": 6,
+      "month": 2
+    },
+    {
+      "term": "approximal",
+      "meaning": "zum\nNachbarza\nhn hin",
+      "practice": "",
+      "prep": "",
+      "page": 6,
+      "month": 2
+    },
+    {
+      "term": "Approximalfläche\nn",
+      "meaning": "Flächen\nzweier\nbenachbar\nter Zähne",
+      "practice": "",
+      "prep": "",
+      "page": 7,
+      "month": 2
+    },
+    {
+      "term": "Arkansas-\nSteinchen",
+      "meaning": "weißer\nSchleifkörp\ner zum\nGlätten\nvon\nFüllungen\noder\nKanten",
+      "practice": "",
+      "prep": "",
+      "page": 7,
+      "month": 2
+    },
+    {
+      "term": "Artikulation,\nartikulieren",
+      "meaning": "Gleitbewe\ngung der\nZahnreihe",
+      "practice": "",
+      "prep": "",
+      "page": 7,
+      "month": 2
+    },
+    {
+      "term": "Artikulationspapi\ner",
+      "meaning": "(Okklusion\nsfolie), rot,\ngrün oder\nblau\ngefärbtes\nPapier",
+      "practice": "",
+      "prep": "",
+      "page": 7,
+      "month": 2
+    },
+    {
+      "term": "Artikulator",
+      "meaning": "„Gelenk-\nSimulator“\nd.h. ein\nApparat,\nder die\nBewegung\nder Kiefer\nzueinander\nnachahme\nn kann",
+      "practice": "",
+      "prep": "",
+      "page": 7,
+      "month": 2
+    },
+    {
+      "term": "asymptomatisch",
+      "meaning": "ohne\nerkennbar\ne\nSymptome",
+      "practice": "",
+      "prep": "",
+      "page": 8,
+      "month": 2
+    },
+    {
+      "term": "atraumatisch",
+      "meaning": "ohne eine\nWunde\noder\nVerletzung\nverlaufend;\nBsp.\natraumatis\nches\nNahtmateri\nal (Faden\nund Nadel\nsind\nmiteinande\nr\nverschwei\nßt ->\nEinstichste\nlle fast\nunsichtbar)",
+      "practice": "",
+      "prep": "",
+      "page": 8,
+      "month": 2
+    },
+    {
+      "term": "Atrophie",
+      "meaning": "Schwund;\nallmählich\ner Abbau\nvon\nOrganen",
+      "practice": "",
+      "prep": "",
+      "page": 8,
+      "month": 2
+    },
+    {
+      "term": "Attachmentverlu\nst",
+      "meaning": "Verlust der\nBefestigun\ng eines\nZahnes\noder\nImplantate\ns durch\nKnochena\nbbau",
+      "practice": "",
+      "prep": "",
+      "page": 9,
+      "month": 2
+    },
+    {
+      "term": "Aufbaufüllung",
+      "meaning": "Füllung zur\nVorbereitu\nng eines\nZahnes\nvor dessen\nÜberkronu\nng",
+      "practice": "",
+      "prep": "",
+      "page": 9,
+      "month": 2
+    },
+    {
+      "term": "Aufbiss-Schiene",
+      "meaning": "(auch\nKnirschers\nchiene)\nindividuell\nangefertigt\ne\nKunststoff\nplatte zur\nEntlastung\nder\nKiefergele\nnke",
+      "practice": "",
+      "prep": "",
+      "page": 9,
+      "month": 2
+    },
+    {
+      "term": "Aufklappung",
+      "meaning": "umgangss\nprachlich\nfür\nOsteotomi\ne",
+      "practice": "",
+      "prep": "",
+      "page": 9,
+      "month": 2
+    },
+    {
+      "term": "Autoklav",
+      "meaning": "Hochdruck\nsterilisator\nzur\nSterilisatio\nn",
+      "practice": "",
+      "prep": "",
+      "page": 10,
+      "month": 2
+    },
+    {
+      "term": "Biofilm",
+      "meaning": "Plaque,\nZahnbelag",
+      "practice": "",
+      "prep": "",
+      "page": 10,
+      "month": 2
+    },
+    {
+      "term": "Biflourid",
+      "meaning": "Zum\ndesensibili\nsieren und\nfür\nIndividualp\nrophylaxe",
+      "practice": "",
+      "prep": "",
+      "page": 10,
+      "month": 2
+    }
+  ],
+  [
+    {
+      "term": "Bifurkation",
+      "meaning": "Gabelung\nder\nWurzeln\nbei 2-\nwurzligen\nZähnen",
+      "practice": "",
+      "prep": "",
+      "page": 10,
+      "month": 3
+    },
+    {
+      "term": "Bio Oss",
+      "meaning": "Knochene\nrsatzmateri\nal vom\nRind",
+      "practice": "",
+      "prep": "",
+      "page": 10,
+      "month": 3
+    },
+    {
+      "term": "Biologische\nBreite",
+      "meaning": "eine\ntransversal\ne Leiste\nzwischen\nmesiopalat\ninalen und\ndistobukka\nlen Höcker",
+      "practice": "",
+      "prep": "",
+      "page": 10,
+      "month": 3
+    },
+    {
+      "term": "Bissnahme",
+      "meaning": "Bestimmu\nng der\nräumlichen\nLage\nbeider\nKiefer\nzueinander",
+      "practice": "",
+      "prep": "",
+      "page": 11,
+      "month": 3
+    },
+    {
+      "term": "Bleaching",
+      "meaning": "bleichen;\nKorrektur\nder\nZahnfarbe",
+      "practice": "",
+      "prep": "",
+      "page": 11,
+      "month": 3
+    },
+    {
+      "term": "Bohrschablone",
+      "meaning": "individuell\ngefertigte\nSchablone\nzur\nÜbertragu\nng der\nImplantatp\nositionen",
+      "practice": "",
+      "prep": "",
+      "page": 11,
+      "month": 3
+    },
+    {
+      "term": "Bruxismus",
+      "meaning": "gewohnhei\ntsmäßiges\nKnirschen\nmit den\nZähnen",
+      "practice": "",
+      "prep": "",
+      "page": 11,
+      "month": 3
+    },
+    {
+      "term": "bukkal",
+      "meaning": "zur Wange",
+      "practice": "",
+      "prep": "",
+      "page": 11,
+      "month": 3
+    },
+    {
+      "term": "Calxyl",
+      "meaning": "Pastenarti\nges\nCalciumhy\ndroxidpräp\narat zur\ndirekten\nÜberkappu\nng der\nPulpa",
+      "practice": "",
+      "prep": "",
+      "page": 11,
+      "month": 3
+    },
+    {
+      "term": "Caninus",
+      "meaning": "Eck-\n/Reißzahn",
+      "practice": "",
+      "prep": "",
+      "page": 11,
+      "month": 3
+    },
+    {
+      "term": "cervical",
+      "meaning": "zum/am\nZahnhals",
+      "practice": "",
+      "prep": "",
+      "page": 11,
+      "month": 3
+    },
+    {
+      "term": "Cave",
+      "meaning": "Vorsicht!\nAchtung!,\nBsp Cave\nAspirin =\nkein\nAspirin",
+      "practice": "",
+      "prep": "",
+      "page": 12,
+      "month": 3
+    },
+    {
+      "term": "chronisch",
+      "meaning": "über einen\nlängeren\nZeitraum\nunbemerkt\nentstehend\noder\nanhaltend",
+      "practice": "",
+      "prep": "",
+      "page": 12,
+      "month": 3
+    },
+    {
+      "term": "Chlorhexidin",
+      "meaning": "Abk. CHX;\nMittel mit\nplaquehem\nmender\nWirkung",
+      "practice": "",
+      "prep": "",
+      "page": 12,
+      "month": 3
+    },
+    {
+      "term": "Clindasaar",
+      "meaning": "Antibiotika\nmit\nWirkstoff\nClindamyci\nn, Mittel\nder Wahl\nbei\nPenicillin-\nAllergie",
+      "practice": "",
+      "prep": "",
+      "page": 12,
+      "month": 3
+    },
+    {
+      "term": "Crista transversa",
+      "meaning": "eine\ntransversal\ne Leiste,\nverbindet\nmesiopalat\ninale und\ndistobukka\nle Höcker",
+      "practice": "",
+      "prep": "",
+      "page": 12,
+      "month": 3
+    },
+    {
+      "term": "Cover-denture-\nProthese",
+      "meaning": "Deckproth\nese, die\naussieht\nwie eine\nTotalprothe\nse, weil die\nnoch\nvorhanden\nen Zähne\nmit\nTeleskope\nn versorgt\nund durch\ndie\nProthese\nüberdeckt\nwerden",
+      "practice": "",
+      "prep": "",
+      "page": 13,
+      "month": 3
+    },
+    {
+      "term": "Decubitus",
+      "meaning": "Druckgesc\nhwür,\n(Prothesen\n-)\nDruckstelle",
+      "practice": "",
+      "prep": "",
+      "page": 13,
+      "month": 3
+    },
+    {
+      "term": "definitiv",
+      "meaning": "endgültig,\nbestimmt;\nBsp.\ndefinitive\nFüllung\n(endgültige\nFüllung)",
+      "practice": "",
+      "prep": "",
+      "page": 13,
+      "month": 3
+    },
+    {
+      "term": "Demineralisation",
+      "meaning": "Entmineral\nisierung;\nEntkalkung\nder\nZahnharts\nubstanz",
+      "practice": "",
+      "prep": "",
+      "page": 13,
+      "month": 3
+    },
+    {
+      "term": "Demenz",
+      "meaning": "Vergesslic\nhkeit\n(meist im\nhöheren\nAlter)",
+      "practice": "",
+      "prep": "",
+      "page": 14,
+      "month": 3
+    },
+    {
+      "term": "Dentitio difficilis",
+      "meaning": "erschwerte\nr\nZahndurch\nbruch (v.a.\ndes\nunteren\nWeisheitsz\nahnes), oft\nmit\nrezidiviere\nnden\nSchlupfwin\nkelinfektio\nnen\nverbunden\n, Abk.\n„Dent. diff.“",
+      "practice": "",
+      "prep": "",
+      "page": 14,
+      "month": 3
+    },
+    {
+      "term": "Dentition",
+      "meaning": "Zahndurch\nbruch;\nZahnung\nDas\nMilchgebis\ns\nentwickelt\nsich\nzwischen\ndem 6.-30.\nLebensmo\nnat\nDas\nbleibende\nGebiss\nzwischen\ndem 6.-14.\nLebensjahr",
+      "practice": "",
+      "prep": "",
+      "page": 14,
+      "month": 3
+    }
+  ],
+  [
+    {
+      "term": "Desmodont",
+      "meaning": "Zahnhalte\napparat",
+      "practice": "",
+      "prep": "",
+      "page": 14,
+      "month": 4
+    },
+    {
+      "term": "Diabetes mellitus",
+      "meaning": "Zuckerkra\nnkheit",
+      "practice": "",
+      "prep": "",
+      "page": 14,
+      "month": 4
+    },
+    {
+      "term": "Desinfektion",
+      "meaning": "Maßnahm\nen, um\neinen\nGegenstan\nd in einen\nkeimarmen\nZustand zu\nversetzen",
+      "practice": "",
+      "prep": "",
+      "page": 15,
+      "month": 4
+    },
+    {
+      "term": "devital",
+      "meaning": "leblos;\nZahn ohne\nlebende\nPulpa",
+      "practice": "",
+      "prep": "",
+      "page": 15,
+      "month": 4
+    },
+    {
+      "term": "Diagnose",
+      "meaning": "Erkennung\nund\nBenennun\ng von\nKrankheite\nn",
+      "practice": "",
+      "prep": "",
+      "page": 15,
+      "month": 4
+    },
+    {
+      "term": "Diastema",
+      "meaning": "Spalt meist\nzwischen\nden\nmittleren\noberen\nSchneidez\nähnen\n(Diastema\nmediale),\nhäufig\ndurch hoch\nansetzend\nes\nLippenbän\nchen\nverursacht",
+      "practice": "",
+      "prep": "",
+      "page": 15,
+      "month": 4
+    },
+    {
+      "term": "distal",
+      "meaning": "von der\nMitte\nentfernt",
+      "practice": "",
+      "prep": "",
+      "page": 15,
+      "month": 4
+    },
+    {
+      "term": "Dolor",
+      "meaning": "Schmerz(e\nn)",
+      "practice": "",
+      "prep": "",
+      "page": 15,
+      "month": 4
+    },
+    {
+      "term": "Dontisolon",
+      "meaning": "Salbe für\nZahnfleisc\nhtaschen\nmit\nCortison",
+      "practice": "",
+      "prep": "",
+      "page": 16,
+      "month": 4
+    },
+    {
+      "term": "Dormicum",
+      "meaning": "Mittel zur\nSedierung\nals\nTablette\noder Saft\noder\nInjektion",
+      "practice": "",
+      "prep": "",
+      "page": 16,
+      "month": 4
+    },
+    {
+      "term": "Drehmomentschl\nüssel",
+      "meaning": "(auch\nDrehmome\nnt-\nRatsche)\nzum\nEinbringen\nvon\nImplantate\nn,\nImplantata\nufbauten",
+      "practice": "",
+      "prep": "",
+      "page": 16,
+      "month": 4
+    },
+    {
+      "term": "doublieren",
+      "meaning": "Verdoppel\nn (z. B.\nGipsmodel\nle)",
+      "practice": "",
+      "prep": "",
+      "page": 16,
+      "month": 4
+    },
+    {
+      "term": "Druckdolenz",
+      "meaning": "Drucksch\nmerzhaftig\nkeit",
+      "practice": "",
+      "prep": "",
+      "page": 16,
+      "month": 4
+    },
+    {
+      "term": "Dynexan",
+      "meaning": "Schmerzlin\ndernde\nHeilsalbe\nfür\nDruckstelle\nn und\nschmerzha\nfte\nMundschle\nimhauterkr\nankungen",
+      "practice": "",
+      "prep": "",
+      "page": 16,
+      "month": 4
+    },
+    {
+      "term": "Dycal",
+      "meaning": "Selbsthäre\ntendes\nCalziumhy\ndroxidpräp\narat (2\nTuben) zur\nindirekten/\ndirekten\nPulpenübe\nrkappung",
+      "practice": "",
+      "prep": "",
+      "page": 17,
+      "month": 4
+    },
+    {
+      "term": "Effortil",
+      "meaning": "Kreislauf\nmedikame\nnt für\nniedrigen\nBlutdruck",
+      "practice": "",
+      "prep": "",
+      "page": 17,
+      "month": 4
+    },
+    {
+      "term": "Elektrotom",
+      "meaning": "elektrische\ns Messer\n(auch zum\nBlutstillen),",
+      "practice": "",
+      "prep": "",
+      "page": 17,
+      "month": 4
+    },
+    {
+      "term": "Elongation",
+      "meaning": "Verlängeru\nng von\nZähnen\ndurch\nHerauswa\nchsen über\ndie\nKauebene\nhinaus",
+      "practice": "",
+      "prep": "",
+      "page": 17,
+      "month": 4
+    },
+    {
+      "term": "Emdogain",
+      "meaning": "Schmelzm\natrixprotein\nzur\nRegenerati\non des\nParodontiu\nms",
+      "practice": "",
+      "prep": "",
+      "page": 17,
+      "month": 4
+    },
+    {
+      "term": "Empress/emax",
+      "meaning": "technische\ns\nVerfahren\nzur\nHerstellun\ng von\nhochfeste\nm\nvollkerami\nschen\nZahnersat\nz",
+      "practice": "",
+      "prep": "",
+      "page": 18,
+      "month": 4
+    },
+    {
+      "term": "Epulis",
+      "meaning": "häufig\nrezidiviere\nnde,\ngingivafarb\nene\nWucherun\ng des\nmarginalen\nPeriodonts",
+      "practice": "",
+      "prep": "",
+      "page": 18,
+      "month": 4
+    },
+    {
+      "term": "Empyem",
+      "meaning": "Eiteransa\nmmlung in\nder\nKieferhöhl\ne",
+      "practice": "",
+      "prep": "",
+      "page": 18,
+      "month": 4
+    },
+    {
+      "term": "Endokarditis-\nProphylaxe",
+      "meaning": "vorbeugen\nde Gabe\neines\nAntibiotiku\nms, das\ndie\nAnsiedlung\nvon\nBakterien\nan den\nHerzklapp\nen\nverhindern\nsoll",
+      "practice": "",
+      "prep": "",
+      "page": 19,
+      "month": 4
+    }
+  ],
+  [
+    {
+      "term": "Endodont",
+      "meaning": "gesamtes\nPulpa-\nDentin-\nSystem",
+      "practice": "",
+      "prep": "",
+      "page": 19,
+      "month": 5
+    },
+    {
+      "term": "enossal",
+      "meaning": "im\nKnochen",
+      "practice": "",
+      "prep": "",
+      "page": 19,
+      "month": 5
+    },
+    {
+      "term": "Erythrozyten",
+      "meaning": "rote\nBlutzellen\n(verantwor\ntlich für\nNährstofftr\nansport,\nGasaustau\nsch, ...)",
+      "practice": "",
+      "prep": "",
+      "page": 19,
+      "month": 5
+    },
+    {
+      "term": "Eugnathie",
+      "meaning": "normal\nverzahntes\nGebiß",
+      "practice": "",
+      "prep": "",
+      "page": 20,
+      "month": 5
+    },
+    {
+      "term": "(Exkavator),\nexkavieren",
+      "meaning": "(Handinstr\nument\nzum)\nEntfernen\nkariöser\nerweichter\nZahnsubst\nanz",
+      "practice": "",
+      "prep": "",
+      "page": 20,
+      "month": 5
+    },
+    {
+      "term": "Excision (auch\nExzision)",
+      "meaning": "Heraussch\nneiden\nz.B. des\nLippenbän\ndchens",
+      "practice": "",
+      "prep": "",
+      "page": 20,
+      "month": 5
+    },
+    {
+      "term": "extraoral",
+      "meaning": "außerhalb\ndes\nMundes",
+      "practice": "",
+      "prep": "",
+      "page": 20,
+      "month": 5
+    },
+    {
+      "term": "Exstirpation",
+      "meaning": "vollständig\ne\nEntfernung\neines\nkranken\nOrgans",
+      "practice": "",
+      "prep": "",
+      "page": 20,
+      "month": 5
+    },
+    {
+      "term": "Extraktion",
+      "meaning": "Zahnentfer\nnung",
+      "practice": "",
+      "prep": "",
+      "page": 20,
+      "month": 5
+    },
+    {
+      "term": "Facette (sprich:\nFasette)",
+      "meaning": "Kunststoff-\noder\nKeramikve\nrblendung",
+      "practice": "",
+      "prep": "",
+      "page": 20,
+      "month": 5
+    },
+    {
+      "term": "finieren",
+      "meaning": "die Ränder\n(einer\nFüllung)\nglätten;\npolieren",
+      "practice": "",
+      "prep": "",
+      "page": 21,
+      "month": 5
+    },
+    {
+      "term": "Fluid",
+      "meaning": "flüssiges\nMedikame\nnt für\nMaßnahm\nen zur\nFluoridieru\nng",
+      "practice": "",
+      "prep": "",
+      "page": 21,
+      "month": 5
+    },
+    {
+      "term": "Fistel",
+      "meaning": "Abflussknä\nlchen für\nEiter und\nSekret\ndurch Haut\noder\nSchleimha\nut",
+      "practice": "",
+      "prep": "",
+      "page": 21,
+      "month": 5
+    },
+    {
+      "term": "Fissur",
+      "meaning": "Grübchen\nim\nKaufläche\nnrelief der\nSeitenzäh\nne",
+      "practice": "",
+      "prep": "",
+      "page": 21,
+      "month": 5
+    },
+    {
+      "term": "Fit checker",
+      "meaning": "Silikonmas\nse zur\nKontrolle\nder\nPassgena\nuigkeit\noder zur\nFixation\nvon\nKronen,\nBrücken\nund Inlays",
+      "practice": "",
+      "prep": "",
+      "page": 21,
+      "month": 5
+    },
+    {
+      "term": "Frenulum",
+      "meaning": "Lippen-\noder\nWangenbä\nndchen",
+      "practice": "",
+      "prep": "",
+      "page": 21,
+      "month": 5
+    },
+    {
+      "term": "Frenulotomie",
+      "meaning": "Durchtrenn\nen eines\nFrenulums",
+      "practice": "",
+      "prep": "",
+      "page": 22,
+      "month": 5
+    },
+    {
+      "term": "Filtek",
+      "meaning": "hochwertig\ner\nkeramisch\nverstärkter\nFüllungsw\nerkstoff",
+      "practice": "",
+      "prep": "",
+      "page": 22,
+      "month": 5
+    },
+    {
+      "term": "Foramen\nmentale",
+      "meaning": "Austrittsöff\nnung des\nNervus\nalveolaris\ninferior,\ndieser\nheißt ab\nhier\nNervus\nmentalis",
+      "practice": "",
+      "prep": "",
+      "page": 22,
+      "month": 5
+    },
+    {
+      "term": "Fraktur",
+      "meaning": "Bruch(z.B.\nKnochen\noder Zahn)",
+      "practice": "",
+      "prep": "",
+      "page": 22,
+      "month": 5
+    },
+    {
+      "term": "Fragment",
+      "meaning": "Bruchstück",
+      "practice": "",
+      "prep": "",
+      "page": 22,
+      "month": 5
+    },
+    {
+      "term": "Friktion",
+      "meaning": "Reibung;\nHaftung\ndurch\nReibung",
+      "practice": "",
+      "prep": "",
+      "page": 22,
+      "month": 5
+    },
+    {
+      "term": "Kanibite",
+      "meaning": "Bissregistr\natmaterial\nauf\nSilikonbasi\ns",
+      "practice": "",
+      "prep": "",
+      "page": 22,
+      "month": 5
+    }
+  ],
+  [
+    {
+      "term": "Gangrän",
+      "meaning": "Absterben\ndes\nGewebes\nmit üblem\nGeruch",
+      "practice": "",
+      "prep": "",
+      "page": 22,
+      "month": 6
+    },
+    {
+      "term": "Gelatampt",
+      "meaning": "Kollagensc\nhwämmch\nen für\nExtraktion\nwunden",
+      "practice": "",
+      "prep": "",
+      "page": 22,
+      "month": 6
+    },
+    {
+      "term": "Gingiva",
+      "meaning": "Zahnfleisc\nh",
+      "practice": "",
+      "prep": "",
+      "page": 23,
+      "month": 6
+    },
+    {
+      "term": "Gingivaformer",
+      "meaning": "Zahnfleisc\nhformer",
+      "practice": "",
+      "prep": "",
+      "page": 23,
+      "month": 6
+    },
+    {
+      "term": "Gingivitis",
+      "meaning": "Zahnfleisc\nhentzündu\nng",
+      "practice": "",
+      "prep": "",
+      "page": 23,
+      "month": 6
+    },
+    {
+      "term": "Glasionomer-\nZement",
+      "meaning": "Zement\nmit hoher\nHaftfähigk\neit am\nDentin ->\nKetac-\nCem",
+      "practice": "",
+      "prep": "",
+      "page": 23,
+      "month": 6
+    },
+    {
+      "term": "Granulom",
+      "meaning": "geschwulst\nartige\nBildung\nvon\nGranulatio\nnsgewebe\nals Folge\neiner\nchronische\nn apicalen\nEntzündun\ng",
+      "practice": "",
+      "prep": "",
+      "page": 23,
+      "month": 6
+    },
+    {
+      "term": "H2O2-Spülung\n(Wasserstoffpero\nxid)",
+      "meaning": "Spülung\nfür\ninfizierte\nExtraktions\nwunden;\nbleichende\ns,\noxidierned\nes\nDesinfesio\nnsmittel",
+      "practice": "",
+      "prep": "",
+      "page": 23,
+      "month": 6
+    },
+    {
+      "term": "Hämatom",
+      "meaning": "Einblutung\nins\nUnterhautg\newebe",
+      "practice": "",
+      "prep": "",
+      "page": 23,
+      "month": 6
+    },
+    {
+      "term": "Hämoglobin",
+      "meaning": "Farbstoff\nder roten\nBlutkörper\nchen",
+      "practice": "",
+      "prep": "",
+      "page": 24,
+      "month": 6
+    },
+    {
+      "term": "Harvard",
+      "meaning": "Phosphatz\nement zum\nzementiere\nn von\nfestsitzend\nem\nZahnersat\nz (vor\nallem\nInlays) und\nfür unter-\nund\nprovisorisc\nhe sowie\nretrograde\nFüllungen",
+      "practice": "",
+      "prep": "",
+      "page": 24,
+      "month": 6
+    },
+    {
+      "term": "Hedström-Feile",
+      "meaning": "Wurzelkan\nalinstrume\nnt mit\nrundem\nQuerschnit\nt",
+      "practice": "",
+      "prep": "",
+      "page": 24,
+      "month": 6
+    },
+    {
+      "term": "Hemisektion",
+      "meaning": "Teilextrakti\non eines\nmehrwurze\nligen\nZahnes",
+      "practice": "",
+      "prep": "",
+      "page": 24,
+      "month": 6
+    },
+    {
+      "term": "Herpes",
+      "meaning": "Virusinfekti\non von\nHaut\nund/oder\nSchleimha\nut",
+      "practice": "",
+      "prep": "",
+      "page": 24,
+      "month": 6
+    },
+    {
+      "term": "Hyperplasie",
+      "meaning": "Gewebeüb\nerschuss\noder –\nüberzahl",
+      "practice": "",
+      "prep": "",
+      "page": 24,
+      "month": 6
+    },
+    {
+      "term": "Hypoplasie",
+      "meaning": "Gewebem\nangel oder\n–unterzahl",
+      "practice": "",
+      "prep": "",
+      "page": 24,
+      "month": 6
+    },
+    {
+      "term": "Ibuprofen",
+      "meaning": "Schmerzm\nittelwirkstof\nf, wirkt\nleicht\nentzündun\ngshemmen\nd, Mittel\nder Wahl\nnach\nzahnärztlic\nh\nchirurgisch\nen\nEingriffen",
+      "practice": "",
+      "prep": "",
+      "page": 25,
+      "month": 6
+    },
+    {
+      "term": "Immediat(prothe\nse)",
+      "meaning": "vorüberge\nhend\n(wobei die\nprovisorisc\nhe\nProthese\nspäter zur\nendgültige\nn Prothese\numgeände\nrt wird)",
+      "practice": "",
+      "prep": "",
+      "page": 25,
+      "month": 6
+    },
+    {
+      "term": "impaktiert",
+      "meaning": "eingeklem\nmt; Zähne,\ndie nicht\ndurchbrec\nhen\nkönnen",
+      "practice": "",
+      "prep": "",
+      "page": 25,
+      "month": 6
+    },
+    {
+      "term": "Impregum /\nthixoform engine",
+      "meaning": "Abdruckm\nasse auf\nPolyätherb\nasis (zäher\nals\ndünnfließe\nnde\nPhase), für\nsehr\ngenaue\nAbdrücke",
+      "practice": "",
+      "prep": "",
+      "page": 25,
+      "month": 6
+    },
+    {
+      "term": "incisal (auch\ninzisal)",
+      "meaning": "zur\nSchneidek\nante hin,\ndie\nSchneidek\nante\nbetreffend\n(nur bei\nFrontzähn\nen)",
+      "practice": "",
+      "prep": "",
+      "page": 26,
+      "month": 6
+    },
+    {
+      "term": "Incisivus",
+      "meaning": "Schneidez\nahn",
+      "practice": "",
+      "prep": "",
+      "page": 26,
+      "month": 6
+    },
+    {
+      "term": "Inzision",
+      "meaning": "Einschnitt\nz.B. zur\nEröffnung\neines\nAbszesses",
+      "practice": "",
+      "prep": "",
+      "page": 26,
+      "month": 6
+    }
+  ],
+  [
+    {
+      "term": "Inlay",
+      "meaning": "Zementier-\noder\nklebbare\nEinlagefüll\nung aus\nGold oder\nKeramik",
+      "practice": "",
+      "prep": "",
+      "page": 26,
+      "month": 7
+    },
+    {
+      "term": "Insuffizienz",
+      "meaning": "ungenüge\nnde\nLeistung\neines\nOrgans",
+      "practice": "",
+      "prep": "",
+      "page": 26,
+      "month": 7
+    },
+    {
+      "term": "interdental",
+      "meaning": "zwischen\nden\nZähnen",
+      "practice": "",
+      "prep": "",
+      "page": 26,
+      "month": 7
+    },
+    {
+      "term": "interforaminal",
+      "meaning": "(Knochen.)\nregion\nzwischen\nden\nForamina\nmentalia",
+      "practice": "",
+      "prep": "",
+      "page": 26,
+      "month": 7
+    },
+    {
+      "term": "intraoral",
+      "meaning": "in der\nMundhöhle",
+      "practice": "",
+      "prep": "",
+      "page": 27,
+      "month": 7
+    },
+    {
+      "term": "Intraligamentäre\nAnästhesie",
+      "meaning": "Injektion\nim\nPeriodonta\nl-Spalt\n(Spalt zw.\nKnochenfa\nch und\nZahnwurze\nl)",
+      "practice": "",
+      "prep": "",
+      "page": 27,
+      "month": 7
+    },
+    {
+      "term": "intravenös",
+      "meaning": "in eine\nVene\nhinein",
+      "practice": "",
+      "prep": "",
+      "page": 27,
+      "month": 7
+    },
+    {
+      "term": "inzidieren",
+      "meaning": "einschneid\nen",
+      "practice": "",
+      "prep": "",
+      "page": 27,
+      "month": 7
+    },
+    {
+      "term": "irreparabel",
+      "meaning": "nicht\nwieder\nherstellbar;\nnicht\nheilbar",
+      "practice": "",
+      "prep": "",
+      "page": 27,
+      "month": 7
+    },
+    {
+      "term": "Isocillin",
+      "meaning": "Antibiotiku\nm aus der\nGruppe\nder\nPenicilline",
+      "practice": "",
+      "prep": "",
+      "page": 27,
+      "month": 7
+    },
+    {
+      "term": "Karies profunda",
+      "meaning": "tiefe\nkariöse\nLäsion, die\nfast bis zur\nPulpa\nreicht",
+      "practice": "",
+      "prep": "",
+      "page": 27,
+      "month": 7
+    },
+    {
+      "term": "Kavo-flex",
+      "meaning": "Pulverstra\nhlgerät\n(der Firma\nKAVO), bei\nuns gefüllt\nmit Airflow\nPulver\ngegen\nhartnäckig\ne Beläge",
+      "practice": "",
+      "prep": "",
+      "page": 28,
+      "month": 7
+    },
+    {
+      "term": "Ketac-cem",
+      "meaning": "Glasionom\nerzement\nmit hoher\nEndhärte\n(zum\ndefintiven\nZementier\nen von\nKronen/Br\nücken)",
+      "practice": "",
+      "prep": "",
+      "page": 28,
+      "month": 7
+    },
+    {
+      "term": "Ketac-molar",
+      "meaning": "abrasiver,\nweniger\nharter\nGlasionom\nerzement\n(für\nAufbau-\nund\nUnterfüllun\ngen oder\nKassenfüll\nungen)",
+      "practice": "",
+      "prep": "",
+      "page": 28,
+      "month": 7
+    },
+    {
+      "term": "Komposit",
+      "meaning": "Hochwerti\nger\nkeramisch\nverstärkter\nKunststoff\n(Kunststoff\nmit\nMakrofüller\nn)",
+      "practice": "",
+      "prep": "",
+      "page": 29,
+      "month": 7
+    },
+    {
+      "term": "koronal",
+      "meaning": "zur\nZahnkrone\ngerichtet",
+      "practice": "",
+      "prep": "",
+      "page": 29,
+      "month": 7
+    },
+    {
+      "term": "Konkrement",
+      "meaning": "harter\nZahnbelag\n, Zahnstein\nunterhalb\ndes\nZahnfleisc\nhs",
+      "practice": "",
+      "prep": "",
+      "page": 29,
+      "month": 7
+    },
+    {
+      "term": "konservierend",
+      "meaning": "erhaltend",
+      "practice": "",
+      "prep": "",
+      "page": 29,
+      "month": 7
+    },
+    {
+      "term": "Konsilium",
+      "meaning": "Beratung\nmehrerer\nÄrzte über\neinen\nKrankheits\nfall",
+      "practice": "",
+      "prep": "",
+      "page": 29,
+      "month": 7
+    },
+    {
+      "term": "Kürette",
+      "meaning": "Zahnsteini\nnstrument\nmit\ngerundete\nm\nArbeitsend\ne zur\nsubgingiva\nlen\nReinigung",
+      "practice": "",
+      "prep": "",
+      "page": 29,
+      "month": 7
+    },
+    {
+      "term": "Laser",
+      "meaning": "energiereic\nher\nLichtstrahl\nmit breiter\nAnwendun\ng in\nMedizin\nund\nTechnik",
+      "practice": "",
+      "prep": "",
+      "page": 30,
+      "month": 7
+    },
+    {
+      "term": "labial",
+      "meaning": "in\nRichtung\nder Lippe",
+      "practice": "",
+      "prep": "",
+      "page": 30,
+      "month": 7
+    },
+    {
+      "term": "Läsion",
+      "meaning": "Verletzung\n;\nBeschädig\nung",
+      "practice": "",
+      "prep": "",
+      "page": 30,
+      "month": 7
+    }
+  ],
+  [
+    {
+      "term": "Langenbeck-\nHaken",
+      "meaning": "stumpfer,\nrechtwinkli\ng\nabgeboge\nner\nWundhake\nn",
+      "practice": "",
+      "prep": "",
+      "page": 30,
+      "month": 8
+    },
+    {
+      "term": "Lappenplastik",
+      "meaning": "chirurg.\nEingriff zur\nDeckung\neines\nSchleimha\nutdefekts",
+      "practice": "",
+      "prep": "",
+      "page": 30,
+      "month": 8
+    },
+    {
+      "term": "lege artis",
+      "meaning": "vorschrifts\nmäßig;\nnach den\nRegeln der\n(ärztlichen)\nKunst",
+      "practice": "",
+      "prep": "",
+      "page": 30,
+      "month": 8
+    },
+    {
+      "term": "Laterotrusion",
+      "meaning": "Seitwärtsb\newegung\n(dynamisc\nh)",
+      "practice": "",
+      "prep": "",
+      "page": 30,
+      "month": 8
+    },
+    {
+      "term": "Leukozyten",
+      "meaning": "weiße\nBlutzellen\nzur\nunspezifisc\nhen\nInfektabwe\nhr",
+      "practice": "",
+      "prep": "",
+      "page": 31,
+      "month": 8
+    },
+    {
+      "term": "Lindemann-\nFräse",
+      "meaning": "länglicher\nKnochenfr\näser zum\nEntfernen\noder\nModelliere\nn von\nKnochen\nin der\nChirurgie",
+      "practice": "",
+      "prep": "",
+      "page": 31,
+      "month": 8
+    },
+    {
+      "term": "lingual",
+      "meaning": "zur Zunge",
+      "practice": "",
+      "prep": "",
+      "page": 31,
+      "month": 8
+    },
+    {
+      "term": "Lunjatschek",
+      "meaning": "Tamponad\nenstopfer\nnach ...",
+      "practice": "",
+      "prep": "",
+      "page": 31,
+      "month": 8
+    },
+    {
+      "term": "Lymphozyten",
+      "meaning": "weiße\nBlutzellen\n(sind für\ndie\nspezifische\nn\nInfektabwe\nhr\nverantwortl\nich)",
+      "practice": "",
+      "prep": "",
+      "page": 31,
+      "month": 8
+    },
+    {
+      "term": "Luxation",
+      "meaning": "Lockerung\neines\nZahnes",
+      "practice": "",
+      "prep": "",
+      "page": 31,
+      "month": 8
+    },
+    {
+      "term": "Marcumar",
+      "meaning": "blutverdün\nnendes\nMedikame\nnt (siehe\nQuickwert)\n, Pat die\ndieses\nEinnehme\nn nach\naktuellem\nQuick/INR-\nWert\nfragen",
+      "practice": "",
+      "prep": "",
+      "page": 32,
+      "month": 8
+    },
+    {
+      "term": "marginal",
+      "meaning": "oberflächli\nch, den\nZahnfleisc\nhrand\nbetreffend",
+      "practice": "",
+      "prep": "",
+      "page": 32,
+      "month": 8
+    },
+    {
+      "term": "MAV",
+      "meaning": "Abk. für\nMund-\nAntrum-\nVerbindun\ng",
+      "practice": "",
+      "prep": "",
+      "page": 33,
+      "month": 8
+    },
+    {
+      "term": "mesial",
+      "meaning": "zur Mitte",
+      "practice": "",
+      "prep": "",
+      "page": 33,
+      "month": 8
+    },
+    {
+      "term": "Mehrschichttech\nnik",
+      "meaning": "Technik\nbei der\nadhäsiven\nBefestigun\ng von\nKomposit",
+      "practice": "",
+      "prep": "",
+      "page": 33,
+      "month": 8
+    },
+    {
+      "term": "Minimalinvasive\nTherapie",
+      "meaning": "schonende\nBehandlun\ngsmethode",
+      "practice": "",
+      "prep": "",
+      "page": 33,
+      "month": 8
+    },
+    {
+      "term": "Monobond S /\nSilan",
+      "meaning": "vermittelt\nHaftfähigk\neit von\nKunstoffkle\nbern\n(Variolink)\nan\nkeramisch\nen\nOberfläche\nn",
+      "practice": "",
+      "prep": "",
+      "page": 34,
+      "month": 8
+    },
+    {
+      "term": "Molar",
+      "meaning": "die\nhintersten\ndrei\nBackenzäh\nne",
+      "practice": "",
+      "prep": "",
+      "page": 34,
+      "month": 8
+    },
+    {
+      "term": "Mukosa",
+      "meaning": "Schleimha\nut (stets\nmit\nSchleim\nbedeckte\nAuskleidun\ng aller\ninneren\nKörperobe\nrflächen)",
+      "practice": "",
+      "prep": "",
+      "page": 34,
+      "month": 8
+    },
+    {
+      "term": "Mukoperiostlapp\nen",
+      "meaning": "der bei der\nAufklappu\nng\ngebildete\nLappen\naus\nSchleimha\nut und\nPeriost",
+      "practice": "",
+      "prep": "",
+      "page": 34,
+      "month": 8
+    },
+    {
+      "term": "Myoarthropathie",
+      "meaning": "Erkrankun\ng von\nKiefergele\nnk und\nKaumuskul\natur",
+      "practice": "",
+      "prep": "",
+      "page": 34,
+      "month": 8
+    },
+    {
+      "term": "Natriumhypochlo\nrid",
+      "meaning": "Spüllösung\nfür\ngangränös\ne oder\nstark\nobliterierte\nWurzelkan\näle; macht\nFlecken\nauf\nKleidung,\nnicht auf\nHaut und\nSchleimhä\nute\nbringen;\nsehr\nbedachter\nUmgang!!",
+      "practice": "",
+      "prep": "",
+      "page": 35,
+      "month": 8
+    },
+    {
+      "term": "Narkose",
+      "meaning": "allgemeine\nSchmerza\nusschaltun\ng",
+      "practice": "",
+      "prep": "",
+      "page": 35,
+      "month": 8
+    }
+  ],
+  [
+    {
+      "term": "Nekrose",
+      "meaning": "abgestorb\nenes\nGewebe\n(aufgrund\nmangelnde\nr\nBlutversor\ngung)",
+      "practice": "",
+      "prep": "",
+      "page": 35,
+      "month": 9
+    },
+    {
+      "term": "NEM",
+      "meaning": "Abk. für\nNichtedel\nmetall",
+      "practice": "",
+      "prep": "",
+      "page": 35,
+      "month": 9
+    },
+    {
+      "term": "Novalgin",
+      "meaning": "Schmerzm\nittel bei\nstarken\nSchmerze\nn",
+      "practice": "",
+      "prep": "",
+      "page": 35,
+      "month": 9
+    },
+    {
+      "term": "Ohnmacht",
+      "meaning": "plötzliche\nzerebrale\n(das\nGehirn\nbetreffend\ne)\nBlutleere,\ndie zum\nBewusstse\ninsverlust\nführen\nkann",
+      "practice": "",
+      "prep": "",
+      "page": 36,
+      "month": 9
+    },
+    {
+      "term": "okklusal",
+      "meaning": "die\nKaufläche\n(ab\nPrämolare\nn)",
+      "practice": "",
+      "prep": "",
+      "page": 36,
+      "month": 9
+    },
+    {
+      "term": "Onlay (Overlay)",
+      "meaning": "Inlay mit\neinbezoge\nner\nKaufläche\n(Kaukante\nnschutz),\ndaher\nauch auf\navitalen\nZähnen\nmöglich",
+      "practice": "",
+      "prep": "",
+      "page": 36,
+      "month": 9
+    },
+    {
+      "term": "Glasfaserstift\nvon Komet",
+      "meaning": "wird in den\nWurzelkan\nal\neingebrach\nt und\nstabilisiert\nden\nAufbau\ndes\nZahnes\n(Krone,...)",
+      "practice": "",
+      "prep": "",
+      "page": 37,
+      "month": 9
+    },
+    {
+      "term": "Okklusion",
+      "meaning": "Kontakt\nder Zähne\nzwischen\nOberkiefer\nund\nUnterkiefer",
+      "practice": "",
+      "prep": "",
+      "page": 37,
+      "month": 9
+    },
+    {
+      "term": "Osteoporose",
+      "meaning": "Schwund\nvon\nKnochens\nubstanz\ndurch\nVergrößer\nung der\nMarkräum\ne (v.a. bei\nälteren\nFrauen\nvorkomme\nnd)",
+      "practice": "",
+      "prep": "",
+      "page": 37,
+      "month": 9
+    },
+    {
+      "term": "Osteotomie",
+      "meaning": "Durchtrenn\nung eines\nKnochens\nmit\nSäge/Bohr\ner(Meißel",
+      "practice": "",
+      "prep": "",
+      "page": 37,
+      "month": 9
+    },
+    {
+      "term": "palatinal",
+      "meaning": "zum\nGaumen",
+      "practice": "",
+      "prep": "",
+      "page": 38,
+      "month": 9
+    },
+    {
+      "term": "Palpation",
+      "meaning": "Betasten,\nAustasten\n(bei ärztl.\nUntersuch\nung)",
+      "practice": "",
+      "prep": "",
+      "page": 38,
+      "month": 9
+    },
+    {
+      "term": "Papille",
+      "meaning": "interdental\ne\nZahnfleisc\nhspitze",
+      "practice": "",
+      "prep": "",
+      "page": 38,
+      "month": 9
+    },
+    {
+      "term": "Paracetamol",
+      "meaning": "Schmerzm\nittel (Mittel\nder Wahl\nbei\nfiebrigen\nProzessen\nund bei\nSchwange\nren/Kinder\nn)",
+      "practice": "",
+      "prep": "",
+      "page": 38,
+      "month": 9
+    },
+    {
+      "term": "parapulpärer Stift",
+      "meaning": "Metallstiftc\nhen,\nwelches\nnicht im\nWurzelkan\nal sondern\nim\nbenachbar\nten Dentin\neingeschra\nubt wird,\nwurde\nfrüher\nverwendet\nals\nKompositf\nüllungen\nnicht gut\ngehaftet\nhaben\n(obsolet)",
+      "practice": "",
+      "prep": "",
+      "page": 38,
+      "month": 9
+    },
+    {
+      "term": "Parodontitis\napicalis",
+      "meaning": "bakterielle\nEntzündun\ng des\nZahnbette\ns und des\numliegend\nen\nKnochens\nan der\nWurzelspit\nze\n(röntgenol\nogische\nAufhellung\nhäufig),\nWKB\nunumgängl\nich",
+      "practice": "",
+      "prep": "",
+      "page": 39,
+      "month": 9
+    },
+    {
+      "term": "Parodontitis\nmarginalis\nprofunda",
+      "meaning": "sehr weit\nfortgeschrit\ntene P.m.\nmit\nTaschentie\nfen über 6\nmm",
+      "practice": "",
+      "prep": "",
+      "page": 40,
+      "month": 9
+    },
+    {
+      "term": "Parodontitis\nmarginalis\nsuperficialis",
+      "meaning": "oberflächli\nche P.m.\nmit\nTaschentie\nfen von 3\nbis 6 mm",
+      "practice": "",
+      "prep": "",
+      "page": 40,
+      "month": 9
+    },
+    {
+      "term": "Parodontose",
+      "meaning": "Laienbegrif\nf für\nParodontiti\ns",
+      "practice": "",
+      "prep": "",
+      "page": 40,
+      "month": 9
+    },
+    {
+      "term": "Parodontitis",
+      "meaning": "infektiöse,\nbakteriell\nbedingte\nErkrankun\ng des\nZahnbette\ns",
+      "practice": "",
+      "prep": "",
+      "page": 40,
+      "month": 9
+    },
+    {
+      "term": "Patrize",
+      "meaning": "an der\nTeilprothes\ne\nbefestigtes\nGegenstüc\nk zur\nMatrize (z.\nB. bei\nGeschiebe\nn)",
+      "practice": "",
+      "prep": "",
+      "page": 40,
+      "month": 9
+    },
+    {
+      "term": "Periost",
+      "meaning": "Knochenh\naut",
+      "practice": "",
+      "prep": "",
+      "page": 40,
+      "month": 9
+    },
+    {
+      "term": "Perio Chip",
+      "meaning": "Medikame\nnt zum\nEingeben\nin einzelne\nPA-\nTaschen,\nCHX-Chip",
+      "practice": "",
+      "prep": "",
+      "page": 41,
+      "month": 9
+    }
+  ],
+  [
+    {
+      "term": "Prämolar",
+      "meaning": "zwei\nBackenzäh\nne vor\nMolaren",
+      "practice": "",
+      "prep": "",
+      "page": 41,
+      "month": 10
+    },
+    {
+      "term": "Progenie",
+      "meaning": "von der\nNorm\nabweichen\nde\nVorverlage\nrung des\nUK",
+      "practice": "",
+      "prep": "",
+      "page": 41,
+      "month": 10
+    },
+    {
+      "term": "Prognathie",
+      "meaning": "von der\nNorm\nabweichen\nde\nVorverlage\nrung des\nOK",
+      "practice": "",
+      "prep": "",
+      "page": 41,
+      "month": 10
+    },
+    {
+      "term": "KaniTemp",
+      "meaning": "kaltpolyme\nrisierender\nKunststoff\nzur\ndirekten\nHerstellun\ng von\nprovisorisc\nhen\nKronen\nund\nBrücken",
+      "practice": "",
+      "prep": "",
+      "page": 41,
+      "month": 10
+    },
+    {
+      "term": "Protrusion",
+      "meaning": "Bewusste\nVorschubb\newegung\ndes\nUnterkiefer\ns",
+      "practice": "",
+      "prep": "",
+      "page": 41,
+      "month": 10
+    },
+    {
+      "term": "Pellet",
+      "meaning": "Kügelchen\n;\nSchaumst\noffpellet\nzum\nEinbringen\nvon\nMedikame\nnten",
+      "practice": "",
+      "prep": "",
+      "page": 42,
+      "month": 10
+    },
+    {
+      "term": "Perforation",
+      "meaning": "Durchbohr\nung;\nunbeabsic\nhtigte\nDurchbohr\nung des\nWurzelkan\nals oder in\ndie\nKieferhöhl\ne",
+      "practice": "",
+      "prep": "",
+      "page": 42,
+      "month": 10
+    },
+    {
+      "term": "Periimplantitis",
+      "meaning": "Entzündun\ng um den\nImplantatk\nörper",
+      "practice": "",
+      "prep": "",
+      "page": 42,
+      "month": 10
+    },
+    {
+      "term": "Perkussion",
+      "meaning": "Beklopfen\neines\nZahnes\nzur\nDiagnose\nbei\nZahnerkra\nnkungen",
+      "practice": "",
+      "prep": "",
+      "page": 42,
+      "month": 10
+    },
+    {
+      "term": "permanent",
+      "meaning": "dauernd;\nbleibend",
+      "practice": "",
+      "prep": "",
+      "page": 42,
+      "month": 10
+    },
+    {
+      "term": "persistieren",
+      "meaning": "bestehen\nbleiben;\nfortdauern",
+      "practice": "",
+      "prep": "",
+      "page": 42,
+      "month": 10
+    },
+    {
+      "term": "Plugger",
+      "meaning": "Instrument\nfür die\nWurzelkan\nalfüllung",
+      "practice": "",
+      "prep": "",
+      "page": 43,
+      "month": 10
+    },
+    {
+      "term": "Polymerisationsl\nampe",
+      "meaning": "Gerät zur\nLichthärtun\ng von\nKomposit-\nMaterialien",
+      "practice": "",
+      "prep": "",
+      "page": 43,
+      "month": 10
+    },
+    {
+      "term": "Prädilektionsstell\nen",
+      "meaning": "Stellen am\nZahn, an\ndenen\nKaries\nbevorzugt\nentsteht",
+      "practice": "",
+      "prep": "",
+      "page": 43,
+      "month": 10
+    },
+    {
+      "term": "Prämolar",
+      "meaning": "kleiner\nBackenzah\nn",
+      "practice": "",
+      "prep": "",
+      "page": 43,
+      "month": 10
+    },
+    {
+      "term": "Präparation",
+      "meaning": "Beschleife\nn eines\nZahnes\nzur\nVorbereitu\nng für eine\nFüllung\noder\nÜberkronu\nng",
+      "practice": "",
+      "prep": "",
+      "page": 43,
+      "month": 10
+    },
+    {
+      "term": "Pus, purulent",
+      "meaning": "Eiter, eitrig",
+      "practice": "",
+      "prep": "",
+      "page": 43,
+      "month": 10
+    },
+    {
+      "term": "Quadrant",
+      "meaning": "Viertel\neines\nKiefers",
+      "practice": "",
+      "prep": "",
+      "page": 43,
+      "month": 10
+    },
+    {
+      "term": "radikulär",
+      "meaning": "zur Wurzel\ngehörig",
+      "practice": "",
+      "prep": "",
+      "page": 44,
+      "month": 10
+    },
+    {
+      "term": "Radix",
+      "meaning": "Wurzel",
+      "practice": "",
+      "prep": "",
+      "page": 44,
+      "month": 10
+    },
+    {
+      "term": "Radix-Anker",
+      "meaning": "geschraubt\ner und\n/oder\nzementiert\ner\nWurzelstift",
+      "practice": "",
+      "prep": "",
+      "page": 44,
+      "month": 10
+    },
+    {
+      "term": "Radix relicta",
+      "meaning": "verlagerter\nWurzelstift",
+      "practice": "",
+      "prep": "",
+      "page": 44,
+      "month": 10
+    },
+    {
+      "term": "Reamer",
+      "meaning": "Wurzelkan\nalinstrume\nnt mit 4\nkantigem\nQuerschnit\nt (wird\nauch zur\nMessaufna\nhme\nverwendet)",
+      "practice": "",
+      "prep": "",
+      "page": 44,
+      "month": 10
+    }
+  ],
+  [
+    {
+      "term": "Reflux",
+      "meaning": "Rückfluss\nvon\nMagensaft\nin die\nSpeiseröhr\ne",
+      "practice": "",
+      "prep": "",
+      "page": 44,
+      "month": 11
+    },
+    {
+      "term": "Rezidiv,\nrezidivierend",
+      "meaning": "Wiederkeh\nrender\nBefund,\nRückfall",
+      "practice": "",
+      "prep": "",
+      "page": 45,
+      "month": 11
+    },
+    {
+      "term": "Reinfektion",
+      "meaning": "Wiederans\nteckung\nmit dem\ngleichen\nKrankheits\nerreger",
+      "practice": "",
+      "prep": "",
+      "page": 45,
+      "month": 11
+    },
+    {
+      "term": "relative\nTrockenlegung",
+      "meaning": "eingeschrä\nnkte\nTrockenleg\nung einer\nKavität\nmithilfe\nvon\nWatterolle\nn",
+      "practice": "",
+      "prep": "",
+      "page": 45,
+      "month": 11
+    },
+    {
+      "term": "Remineralisation",
+      "meaning": "Wiederver\nkalkung\ndes\nZahnschm\nelzes\ndurch\nEinlagerun\ng von\nMineralstof\nfen",
+      "practice": "",
+      "prep": "",
+      "page": 45,
+      "month": 11
+    },
+    {
+      "term": "Resektion",
+      "meaning": "operative\nEntfernung\neines\nerkrankten\nOrgans\n(Bsp.\nWurzelspit\nzenresekti\non)",
+      "practice": "",
+      "prep": "",
+      "page": 45,
+      "month": 11
+    },
+    {
+      "term": "Rezession",
+      "meaning": "Zurückgeh\nen von\nZahnfleisc\nh",
+      "practice": "",
+      "prep": "",
+      "page": 46,
+      "month": 11
+    },
+    {
+      "term": "Root Planing",
+      "meaning": "Wurzelglät\ntung\n(Parodonta\nlbehandlun\ng)",
+      "practice": "",
+      "prep": "",
+      "page": 46,
+      "month": 11
+    },
+    {
+      "term": "Scaler",
+      "meaning": "Instrument\nmit spitzen\nArbeitsend\ne zum\nEntfernen\nvon\nsupragingi\nvalem\nZahnstein",
+      "practice": "",
+      "prep": "",
+      "page": 46,
+      "month": 11
+    },
+    {
+      "term": "Saliva",
+      "meaning": "Speichel",
+      "practice": "",
+      "prep": "",
+      "page": 46,
+      "month": 11
+    },
+    {
+      "term": "Sanierung",
+      "meaning": "Beseitigun\ng von\nKrankheit",
+      "practice": "",
+      "prep": "",
+      "page": 46,
+      "month": 11
+    },
+    {
+      "term": "Säure-Ätz-\nTechnik",
+      "meaning": "Adhäsive\nBefestigun\ng des\nKomposits",
+      "practice": "",
+      "prep": "",
+      "page": 46,
+      "month": 11
+    },
+    {
+      "term": "Sealer",
+      "meaning": "plastisches\nWurzelkan\nal-\nFüllmateria\nl",
+      "practice": "",
+      "prep": "",
+      "page": 46,
+      "month": 11
+    },
+    {
+      "term": "sedieren",
+      "meaning": "beruhigen",
+      "practice": "",
+      "prep": "",
+      "page": 46,
+      "month": 11
+    },
+    {
+      "term": "Sinuslift externer",
+      "meaning": "Zwischenl\nagerungspl\nastik von\nKnochen\nzwischen\ndie\nSchleimha\nut der\nKieferhöhl\ne\n(Schneider\nsche\nMembran),\ndem\nKieferhöhl\nenboden\nund dem\nfazialen\nKnochend\neckel mit\nlateralem\nZugang",
+      "practice": "",
+      "prep": "",
+      "page": 47,
+      "month": 11
+    },
+    {
+      "term": "Sinuslift interner",
+      "meaning": "Zwischenl\nagerungspl\nastik von\nKnochen\nzwischen\ndie\nSchleimha\nut der\nKieferhöhl\ne\n(Schneider\nsche\nMembran)\nund dem\nKieferhöhl\nenboden\nlokal am\nOrt der\nImplantatio\nn",
+      "practice": "",
+      "prep": "",
+      "page": 47,
+      "month": 11
+    },
+    {
+      "term": "Sinus maxillaris",
+      "meaning": "Kieferhöhl\ne",
+      "practice": "",
+      "prep": "",
+      "page": 48,
+      "month": 11
+    },
+    {
+      "term": "Sinusitis\n(maxillaris)",
+      "meaning": "Entzündun\ng der\nKieferhöhl\ne",
+      "practice": "",
+      "prep": "",
+      "page": 48,
+      "month": 11
+    },
+    {
+      "term": "Soflex-Scheiben",
+      "meaning": "Polierschei\nben in\nverschiede\nnen\nKörnungen\nmit einer\nbeschichte\nten und\neiner\nunbeschic\nhteten\nSeite,\nmüssen\nauf ein\nMandrell\ngespannt\nwerden,\nmeist auf\nblauem\nWinkelstüc\nk",
+      "practice": "",
+      "prep": "",
+      "page": 48,
+      "month": 11
+    },
+    {
+      "term": "Spee-Kurve",
+      "meaning": "bogenförm\nige, im UK\nnach\ndorsal\nansteigend\ne\nOkklusions\nlinie im\neugnathen\nGebiss",
+      "practice": "",
+      "prep": "",
+      "page": 48,
+      "month": 11
+    },
+    {
+      "term": "subgingival",
+      "meaning": "unter dem\nZahnfleisc\nhniveau",
+      "practice": "",
+      "prep": "",
+      "page": 49,
+      "month": 11
+    },
+    {
+      "term": "subperiostal",
+      "meaning": "unter der\nKnochenh\naut",
+      "practice": "",
+      "prep": "",
+      "page": 49,
+      "month": 11
+    },
+    {
+      "term": "Superfloss",
+      "meaning": "Schaumst\noff-\nverdikcte\nZahnseide\nzum\nReinigen\nvon\nZahnzwisc\nhenräume\nn und\nBrückengli\nedern",
+      "practice": "",
+      "prep": "",
+      "page": 49,
+      "month": 11
+    }
+  ],
+  [
+    {
+      "term": "supragingival",
+      "meaning": "über dem\nZahnfleisc\nhsaum",
+      "practice": "",
+      "prep": "",
+      "page": 49,
+      "month": 12
+    },
+    {
+      "term": "Suprakonstruktio\nn",
+      "meaning": "festsitzend\ner\nZahnersat\nz auf\nImplantate\nn",
+      "practice": "",
+      "prep": "",
+      "page": 49,
+      "month": 12
+    },
+    {
+      "term": "Suprakontakt",
+      "meaning": "vorzeitiger\nZahnkonta\nkt",
+      "practice": "",
+      "prep": "",
+      "page": 49,
+      "month": 12
+    },
+    {
+      "term": "synthetisch",
+      "meaning": "künstlich\nhergestellt",
+      "practice": "",
+      "prep": "",
+      "page": 49,
+      "month": 12
+    },
+    {
+      "term": "TempBond",
+      "meaning": "eugenolhal\ntiger\nprovisorisc\nher\nZement\n(nicht für\nProvisorie\nn an\nvollkermisc\nhen\nRestaurati\nonen\nverwenden\n!!!)",
+      "practice": "",
+      "prep": "",
+      "page": 50,
+      "month": 12
+    },
+    {
+      "term": "TempBond NE",
+      "meaning": "eugenolfei\ner\nprovisorisc\nher\nZement",
+      "practice": "",
+      "prep": "",
+      "page": 50,
+      "month": 12
+    },
+    {
+      "term": "Tofflemire-\nMatrize",
+      "meaning": "Matrize,\nderen\nBänder zur\nFormung\nder\nFüllung\nvorgeformt\nsind",
+      "practice": "",
+      "prep": "",
+      "page": 51,
+      "month": 12
+    },
+    {
+      "term": "traumatisch",
+      "meaning": "unfallbedin\ngt\ngeschädigt",
+      "practice": "",
+      "prep": "",
+      "page": 51,
+      "month": 12
+    },
+    {
+      "term": "Tray",
+      "meaning": "Tablett,\nBox\n(beinhaltet\nInstrument\narium für\nganz\nbestimmte\nmeist\nchirurgisch\ne\nTherapie)",
+      "practice": "",
+      "prep": "",
+      "page": 51,
+      "month": 12
+    },
+    {
+      "term": "Trepanation",
+      "meaning": "Aufbohrun\ng;\nEröffnung",
+      "practice": "",
+      "prep": "",
+      "page": 51,
+      "month": 12
+    },
+    {
+      "term": "Trifurkation",
+      "meaning": "Wurzelgab\nelung bei\n3-\nwurzeligen\nZähnen",
+      "practice": "",
+      "prep": "",
+      "page": 51,
+      "month": 12
+    },
+    {
+      "term": "Unterfütterung",
+      "meaning": "Maßnahm\ne, bei der\ndurch\nAuftragen\nvon\nKunststoff\neine\nschlecht\nsitzende\nProthese\nwieder\nangepasst\nwird",
+      "practice": "",
+      "prep": "",
+      "page": 52,
+      "month": 12
+    },
+    {
+      "term": "VDW-Gold",
+      "meaning": "Endo-\nMotor zur\nmaschinell\nen\nAufbereitu\nng des\nWurzelkan\nals mit\nintegrierte\nm Apex-\nLocator",
+      "practice": "",
+      "prep": "",
+      "page": 52,
+      "month": 12
+    },
+    {
+      "term": "Veneer",
+      "meaning": "Vollkerami\nsche\nVerblendsc\nhale",
+      "practice": "",
+      "prep": "",
+      "page": 52,
+      "month": 12
+    },
+    {
+      "term": "Via falsa",
+      "meaning": "„falscher“\nWeg bei\nWurzelbeh\nandlungen",
+      "practice": "",
+      "prep": "",
+      "page": 52,
+      "month": 12
+    },
+    {
+      "term": "Vicryl",
+      "meaning": "resorbierb\nares\nNahtmateri\nal",
+      "practice": "",
+      "prep": "",
+      "page": 52,
+      "month": 12
+    },
+    {
+      "term": "Wax up sprich\n„wäx ap“",
+      "meaning": "Aufwachst\nechnik zur\nSimulation\neiner\ngeplanten\nprothetisch\nen\nTherapie\n(z.B.\nBisshebun\ng,\nKorrektur\nvon\nZahnfehlst\nellungen\noder –\nabrasionen\n)",
+      "practice": "",
+      "prep": "",
+      "page": 53,
+      "month": 12
+    },
+    {
+      "term": "Wurzelamputatio\nn",
+      "meaning": "Entfernung\neiner\nkranken\nWurzel bei\n3-\nwurzeligen\nZähnen\n(oberen\nMolaren)",
+      "practice": "",
+      "prep": "",
+      "page": 53,
+      "month": 12
+    },
+    {
+      "term": "Wurzelspitzenres\nektion (WSR)",
+      "meaning": "Ausräume\nn einer\napikalen\nEntzündun\ng mit\nKappung\nder\nWurzelspit\nze und\nretrograder\nWurzelfüllu\nng",
+      "practice": "",
+      "prep": "",
+      "page": 53,
+      "month": 12
+    },
+    {
+      "term": "White spot",
+      "meaning": "Weißer\nFleck als\nsichtbares\nZeichen\neiner\nbeginnend\nen Karies",
+      "practice": "",
+      "prep": "",
+      "page": 54,
+      "month": 12
+    },
+    {
+      "term": "Xerostomie",
+      "meaning": "Mundtrock\nenheit\ndurch\nvermindert\ne\nSpeichelpr\noduktion\n(genetisch,\ndurch\nMedikame\nnte,\nBestrahlun\ng, Alter)\nverursacht",
+      "practice": "",
+      "prep": "",
+      "page": 54,
+      "month": 12
+    },
+    {
+      "term": "Zyste",
+      "meaning": "ständig\nwachsend\ne mit zäher\nFlüssigkeit\ngefüllte\nBlase, die\ngesundes\nGewebe\nverdrängt",
+      "practice": "",
+      "prep": "",
+      "page": 54,
+      "month": 12
+    },
+    {
+      "term": "Zystostomie",
+      "meaning": "Eröffnung\nund\nOffenhalte\nn des\nZystenbalg\ns (nur bei\nextrem\ngroßen\nZysten im\nBereich\ngroßer\nGefäße,\nNerven\noder\nbenachbar\nter\nKörperhöhl\nen)",
+      "practice": "",
+      "prep": "",
+      "page": 55,
+      "month": 12
+    }
+  ]
+];
+const TOTAL = 277;
+const DEMO_USERS = [
+  {user:"azubi", pass:"mainzahn2026", role:"azubi", name:"Azubi Demo"},
+  {user:"ausbilder", pass:"mainzahn2026", role:"ausbilder", name:"Ausbilder Demo"}
+];
+
+const state = {
+  user: JSON.parse(localStorage.getItem("mz_user") || "null"),
+  month: new Date().getMonth()+1,
+  learn: Number(localStorage.getItem("mz_learn") || 0),
+  results: JSON.parse(localStorage.getItem("mz_results") || "{}"),
+  tab: "home",
+  exam: null
+};
+
+function save() {
+  localStorage.setItem("mz_user", JSON.stringify(state.user));
+  localStorage.setItem("mz_learn", String(state.learn));
+  localStorage.setItem("mz_results", JSON.stringify(state.results));
+}
+
+function mode() {
+  return new Date().getDate() >= 16 ? "exam" : "learn";
+}
+function monthName(m) {
+  return ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"][m-1];
+}
+function esc(s) { return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c])); }
+
+function login() {
+  document.getElementById("app").innerHTML = `
+    <div class="login card">
+      <div class="logo">Mainzahn</div>
+      <div class="muted">Azubi Vokabeltrainer</div>
+      <hr>
+      <h2>Anmelden</h2>
+      <label>Benutzername</label><input id="u" value="">
+      <label>Passwort</label><input id="p" type="password">
+      <button onclick="doLogin()">Einloggen</button>
+      <div class="notice small"><b>Demo-Zugang:</b><br>Azubi: <b>azubi</b> / <b>mainzahn2026</b><br>Ausbilder: <b>ausbilder</b> / <b>mainzahn2026</b></div>
+    </div>`;
+}
+function doLogin() {
+  const u=document.getElementById("u").value.trim(), p=document.getElementById("p").value;
+  const found=DEMO_USERS.find(x=>x.user===u&&x.pass===p);
+  if(!found) return alert("Benutzername oder Passwort ist falsch.");
+  state.user={role:found.role,name:found.name,user:found.user}; save(); render();
+}
+function logout() { state.user=null; save(); login(); }
+
+function shell(content) {
+  const isExam=mode()==="exam";
+  document.getElementById("app").innerHTML = `
+  <header><div class="top">
+    <div><div class="brand">Mainzahn</div><div class="sub">Azubi Vokabeltrainer</div></div>
+    <div class="row"><span class="badge">${isExam?"PRÜFUNGSMODUS":"LERNMODUS"}</span><span>${esc(state.user.name)}</span><button class="secondary" onclick="logout()">Abmelden</button></div>
+  </div></header>
+  <main>
+    <div class="tabs">
+      <button class="${state.tab==="home"?"active":""}" onclick="state.tab='home';render()">Übersicht</button>
+      ${state.user.role==="azubi" ? `<button class="${state.tab==="learn"?"active":""}" onclick="state.tab='learn';render()">Lernen</button>
+      <button class="${state.tab==="exam"?"active":""}" onclick="state.tab='exam';render()">Prüfung</button>` : `<button class="${state.tab==="admin"?"active":""}" onclick="state.tab='admin';render()">Ausbilderbereich</button>`}
+    </div>
+    ${content}
+  </main>`;
+}
+
+function home() {
+  const m=state.month, list=MONTHS[m-1];
+  const res=state.results[m];
+  const examLocked=mode()!=="exam";
+  return `<div class="card">
+    <div class="row"><div><h1>Monat ${m} – ${monthName(m)}</h1><div class="muted">${list.length} Vokabeln</div></div>
+    <span class="badge">${examLocked?"Lernphase":"Prüfungsphase"}</span></div>
+    <div class="notice">
+      <b>Automatik:</b> Vom 1.–15. werden die Monatsvokabeln gelernt. Ab dem 16. wird die Monatsprüfung freigeschaltet.
+    </div>
+    <div class="grid">
+      <div class="card learn"><div class="stat">${list.length}</div><div class="muted">Vokabeln im Monat</div></div>
+      <div class="card"><div class="stat">${Math.min(state.learn,list.length)}</div><div class="muted">Im Lernmodus bearbeitet</div></div>
+      <div class="card ${res?'':'locked'}"><div class="stat">${res?res.score+"%":"–"}</div><div class="muted">Prüfungsergebnis</div></div>
+    </div>
+    <br>
+    <button onclick="state.tab='learn';render()">Vokabeln lernen</button>
+    <button class="secondary ${examLocked?'locked':''}" onclick="state.tab='exam';render()">Prüfung öffnen</button>
+  </div>`;
+}
+
+function learnView() {
+  const list=MONTHS[state.month-1];
+  const i=Math.min(state.learn,list.length-1), e=list[i];
+  return `<div class="card learn">
+    <div class="row"><h2>Lernen – ${monthName(state.month)}</h2><span>${i+1} / ${list.length}</span></div>
+    <div class="progress"><div class="bar" style="width:${Math.round((i/list.length)*100)}%"></div></div>
+    <br>
+    <h1>${esc(e.term)}</h1>
+    <p class="muted">Bedeutung</p>
+    <p id="meaning" class="hidden"><b>${esc(e.meaning)}</b></p>
+    ${e.practice?`<p id="practice" class="hidden"><b>Praxis:</b> ${esc(e.practice)}</p>`:""}
+    ${e.prep?`<p id="prep" class="hidden"><b>Aufbereitung:</b> ${esc(e.prep)}</p>`:""}
+    <button onclick="document.getElementById('meaning').classList.remove('hidden');document.getElementById('practice')?.classList.remove('hidden');document.getElementById('prep')?.classList.remove('hidden')">Lösung anzeigen</button>
+    <button class="secondary" onclick="nextLearn()">Als gelernt markieren</button>
+  </div>`;
+}
+function nextLearn() {
+  state.learn=Math.min(state.learn+1, MONTHS[state.month-1].length);
+  save(); render();
+}
+
+function startExam() {
+  if(mode()!=="exam") {
+    alert("Die Prüfung wird automatisch am 16. des Monats freigeschaltet.");
+    return;
+  }
+  const list=MONTHS[state.month-1];
+  state.exam={i:0,correct:0,answered:false,order:[...Array(list.length).keys()].sort(()=>Math.random()-.5)};
+  renderExam();
+}
+function renderExam() {
+  const list=MONTHS[state.month-1];
+  if(!state.exam) {
+    return `<div class="card exam"><h2>Monatsprüfung – ${monthName(state.month)}</h2>
+      <p>Die Prüfung umfasst alle <b>${list.length}</b> Vokabeln dieses Monats.</p>
+      <p class="muted">Prüfungsmodus ist ab dem 16. aktiv.</p>
+      <button onclick="startExam()">Prüfung starten</button></div>`;
+  }
+  const x=state.exam;
+  if(x.i>=list.length) {
+    const score=Math.round(x.correct/list.length*100);
+    state.results[state.month]={score,correct:x.correct,total:list.length,date:new Date().toLocaleDateString("de-DE")};
+    save(); state.exam=null;
+    return `<div class="card"><h2>Prüfung abgeschlossen</h2><div class="stat">${score}%</div>
+      <p>${x.correct} von ${list.length} richtig.</p>
+      <div class="notice">Das Ergebnis wurde lokal für diesen Demo-Benutzer gespeichert.</div>
+      <button onclick="state.tab='home';render()">Zur Übersicht</button></div>`;
+  }
+  const idx=x.order[x.i], q=list[idx];
+  const choices=[q.meaning];
+  while(choices.length<4 && choices.length<list.length) {
+    const c=list[Math.floor(Math.random()*list.length)].meaning;
+    if(!choices.includes(c)) choices.push(c);
+  }
+  choices.sort(()=>Math.random()-.5);
+  return `<div class="card exam"><div class="row"><h2>Frage ${x.i+1} / ${list.length}</h2><span class="badge">Prüfung</span></div>
+    <h1>${esc(q.term)}</h1><p>Welche Bedeutung gehört dazu?</p>
+    ${choices.map(c=>`<button class="choice" onclick="answerExam(this,${JSON.stringify(c===q.meaning)},${JSON.stringify(q.meaning)})">${esc(c)}</button>`).join("")}
+  </div>`;
+}
+function answerExam(btn,correct,solution) {
+  if(state.exam.answered) return;
+  state.exam.answered=true;
+  btn.classList.add(correct?"correct":"wrong");
+  if(correct) state.exam.correct++;
+  setTimeout(()=>{state.exam.i++;state.exam.answered=false;render();},450);
+}
+
+function admin() {
+  const r=state.results[state.month];
+  return `<div class="card"><h1>Ausbilderbereich</h1>
+    <div class="notice"><b>Mainzahn Jahresplan:</b> 226 Vokabeln aus der bereitgestellten Vokabelliste, verteilt auf 12 Monatsmodule.</div>
+    <table><thead><tr><th>Monat</th><th>Vokabeln</th><th>Status</th><th>Demo-Ergebnis</th></tr></thead>
+    <tbody>${MONTHS.map((x,i)=>`<tr><td>${i+1} – ${monthName(i+1)}</td><td>${x.length}</td><td>${i+1===state.month?(mode()==="exam"?"Prüfung":"Lernen"):"geplant"}</td><td>${state.results[i+1]?state.results[i+1].score+"%":"–"}</td></tr>`).join("")}</tbody></table>
+    <br><p class="muted small">In einer echten Serverversion werden hier mehrere Azubis, Ergebnisse, Bestehensgrenzen, Prüfungsversuche und Exporte zentral gespeichert.</p>
+  </div>`;
+}
+
+function render() {
+  if(!state.user) return login();
+  let c=state.tab==="home"?home():state.tab==="learn"?learnView():state.tab==="exam"?renderExam():admin();
+  shell(c);
+}
+render();
+</script>
+</body>
+</html>
